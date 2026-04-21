@@ -1,0 +1,271 @@
+{% extends 'base.html' %} {% block content %}
+
+<style>
+  .patients-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #00ffff40;
+  }
+
+  .page-header h2 {
+    color: #00ffff;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  }
+
+  .btn-add-patient {
+    background: linear-gradient(135deg, #00ffff, #00ccff);
+    color: #000;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-add-patient:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 255, 255, 0.5);
+    text-decoration: none;
+    color: #000;
+  }
+
+  .patients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+  }
+
+  .patient-card {
+    background: linear-gradient(135deg, #1f1f1f 0%, #262626 100%);
+    border: 1px solid #00ffff30;
+    border-radius: 12px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .patient-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #00ffff, #00ccff);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .patient-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 255, 255, 0.2);
+    border-color: #00ffff60;
+  }
+
+  .patient-card:hover::before {
+    opacity: 1;
+  }
+
+  .patient-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #00ffff, #00ccff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 12px rgba(0, 255, 255, 0.2);
+  }
+
+  .patient-name {
+    color: #00ffff;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+  }
+
+  .patient-badge {
+    display: inline-block;
+    background-color: #00ffff20;
+    color: #00ffff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+  }
+
+  .patient-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #00ffff20;
+  }
+
+  .detail-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #b0bec5;
+    font-size: 14px;
+  }
+
+  .detail-row i {
+    color: #00ffff;
+    width: 20px;
+    text-align: center;
+  }
+
+  .detail-row strong {
+    color: #e0f7fa;
+    min-width: 60px;
+  }
+
+  .patient-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-view {
+    flex: 1;
+    background-color: #00ffff20;
+    color: #00ffff;
+    border: 1px solid #00ffff40;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn-view:hover {
+    background-color: #00ffff40;
+    border-color: #00ffff;
+    text-decoration: none;
+    color: #00ffff;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #1f1f1f 0%, #262626 100%);
+    border: 1px solid #00ffff20;
+    border-radius: 12px;
+  }
+
+  .empty-state i {
+    font-size: 60px;
+    color: #00ffff;
+    margin-bottom: 20px;
+    opacity: 0.5;
+  }
+
+  .empty-state h3 {
+    color: #00ffff;
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .empty-state p {
+    color: #b0bec5;
+    font-size: 16px;
+    margin-bottom: 25px;
+  }
+
+  @media (max-width: 768px) {
+    .patients-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .page-header {
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+    }
+  }
+</style>
+
+<div class="patients-container">
+  <div class="page-header">
+    <h2>My Patients</h2>
+    <a href="/add-patient" class="btn-add-patient">
+      <i class="fas fa-plus"></i> Add New Patient
+    </a>
+  </div>
+
+  {% if patients %}
+  <div class="patients-grid">
+    {% for p in patients %}
+    <div class="patient-card">
+      <div class="patient-avatar">{{ p[1][0].upper() }}</div>
+      <h3 class="patient-name">{{ p[1] }}</h3>
+      <div class="patient-badge">{{ p[3] }}</div>
+
+      <div class="patient-details">
+        <div class="detail-row">
+          <i class="fas fa-birthday-cake"></i>
+          <strong>Age:</strong> {{ p[2] }}
+        </div>
+        <div class="detail-row">
+          <i class="fas fa-phone"></i>
+          <strong>Contact:</strong> {{ p[4] }}
+        </div>
+        <div class="detail-row">
+          <i class="fas fa-map-marker-alt"></i>
+          <strong>Address:</strong> {{ p[5] }}
+        </div>
+      </div>
+
+      <div class="patient-actions">
+        <a href="/patient/{{ p[0] }}" class="btn-view">
+          <i class="fas fa-eye"></i> View Details
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-users"></i>
+    <h3>No Patients Added Yet</h3>
+    <p>Start by adding your first patient to your account</p>
+    <a href="/add-patient" class="btn-add-patient">
+      <i class="fas fa-plus"></i> Add New Patient
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

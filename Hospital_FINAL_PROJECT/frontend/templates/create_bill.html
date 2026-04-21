@@ -1,0 +1,90 @@
+{% extends 'base.html' %} {% block title %}Create Bill - SmartMediHub{% endblock
+%} {% block content %}
+<div class="container-fluid">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="mb-1">Create New Bill</h1>
+          <p class="text-muted">Add items and calculate total</p>
+        </div>
+        <a href="/admin/billing" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left me-2"></i>Back to Billing
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card bg-dark border-0 shadow">
+        <div class="card-body">
+          <!-- Patient Selection -->
+          <form method="POST" action="/admin/create-bill">
+            <div class="mb-3">
+              <label class="form-label text-light fw-bold">
+                <i class="fas fa-user me-2"></i>Select Patient
+              </label>
+              <select
+                name="patient_id"
+                class="form-select form-select-lg"
+                required>
+                <option value="">-- Choose Patient --</option>
+                {% for patient in patients %}
+                <option value="{{ patient[0] }}">
+                  {{ patient[1] }} (ID: {{ patient[0] }})
+                </option>
+                {% endfor %}
+              </select>
+              <small class="text-muted d-block mt-2"
+                >Select the patient for this bill</small
+              >
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>Create Bill & Add Items
+              </button>
+            </div>
+          </form>
+
+          <!-- Quick Reference -->
+          <hr class="border-secondary my-4" />
+          <div class="alert alert-info">
+            <h6 class="mb-3">
+              <i class="fas fa-lightbulb me-2"></i>Common Bill Items
+            </h6>
+            <ul class="mb-0 small">
+              <li>Consultation: $100-200</li>
+              <li>Lab Test: $50-150</li>
+              <li>Medicine/Prescription: $20-500</li>
+              <li>Medical Procedure: $500-2000</li>
+              <li>Emergency Visit: $200-500</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .form-select {
+    background-color: #2a2a2a;
+    color: #ffffff;
+    border-color: #444;
+  }
+
+  .form-select option {
+    background-color: #2a2a2a;
+    color: #ffffff;
+  }
+
+  .form-select:focus {
+    background-color: #2a2a2a;
+    color: #ffffff;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+</style>
+{% endblock %}

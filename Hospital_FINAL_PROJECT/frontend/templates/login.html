@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: black;
+}
+
+.login-box {
+    display: flex;
+    width: 800px;
+    max-width: 90%;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+/* Left panel */
+.left-panel {
+    flex: 1;
+    background: #6c63ff;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+}
+
+.left-panel h2 {
+    margin-bottom: 10px;
+}
+
+.left-panel p {
+    margin-bottom: 20px;
+}
+
+.register-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 1px solid white;
+    color: white;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.register-btn:hover {
+    background: white;
+    color: #6c63ff;
+}
+
+/* Right panel */
+.right-panel {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.right-panel h2 {
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.input-group i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 10px;
+    background: #6c63ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.login-btn:hover {
+    background: #5750d4;
+}
+
+.flash-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+@media(max-width: 768px) {
+    .login-box {
+        flex-direction: column;
+    }
+}
+</style>
+
+<div class="login-container">
+  <div class="login-box">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <h2>Hello, Welcome!</h2>
+      <p>Don't have an account?</p>
+      <a href="/register" class="register-btn">Register</a>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <h2>Login</h2>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash-message">
+            {% for msg in messages %}
+              <p>{{ msg }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <!-- ✅ FIXED FORM -->
+      <form method="POST" action="/login">
+
+        <div class="input-group">
+          <input type="email" name="email" required placeholder="Email">
+          <i class="fas fa-user"></i>
+        </div>
+
+        <div class="input-group">
+          <input type="password" name="password" required placeholder="Password">
+          <i class="fas fa-lock"></i>
+        </div>
+
+        <div class="forgot-password">
+          <a href="#">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,431 @@
+{% extends 'base.html' %} {% block content %}
+
+<style>
+  .ehr-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #00ffff40;
+  }
+
+  .page-header h2 {
+    color: #00ffff;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  }
+
+  .btn-add-record {
+    background: linear-gradient(135deg, #00ffff, #00ccff);
+    color: #000;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-add-record:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 255, 255, 0.5);
+    text-decoration: none;
+    color: #000;
+  }
+
+  .search-box {
+    margin-bottom: 25px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: #121212;
+    border: 1px solid #00ffff40;
+    border-radius: 8px;
+    color: #e0f7fa;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #00ffff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+  }
+
+  .search-input::placeholder {
+    color: #616161;
+  }
+
+  .records-list {
+    display: grid;
+    gap: 20px;
+  }
+
+  .record-card {
+    background: linear-gradient(135deg, #1f1f1f 0%, #262626 100%);
+    border: 1px solid #00ffff30;
+    border-left: 4px solid #00ffff;
+    border-radius: 12px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .record-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 20px rgba(0, 255, 255, 0.2);
+    border-left-color: #00ffff;
+  }
+
+  .record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 15px;
+  }
+
+  .record-title {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .record-icon {
+    font-size: 24px;
+    color: #00ffff;
+  }
+
+  .record-info h3 {
+    color: #00ffff;
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .record-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 13px;
+    color: #b0bec5;
+    flex-wrap: wrap;
+  }
+
+  .record-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .record-meta-item i {
+    color: #00ffff;
+  }
+
+  .record-date {
+    color: #90caf9;
+    font-size: 12px;
+    text-align: right;
+  }
+
+  .record-content {
+    margin: 15px 0;
+    padding: 15px;
+    background-color: #121212;
+    border-left: 3px solid #00ffff;
+    border-radius: 6px;
+  }
+
+  .record-section {
+    margin-bottom: 12px;
+  }
+
+  .record-label {
+    color: #00ffff;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .record-value {
+    color: #e0f7fa;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .record-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding-top: 15px;
+    border-top: 1px solid #00ffff20;
+  }
+
+  .btn-view {
+    background-color: #00ffff20;
+    color: #00ffff;
+    border: 1px solid #00ffff40;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-view:hover {
+    background-color: #00ffff40;
+    border-color: #00ffff;
+    text-decoration: none;
+    color: #00ffff;
+  }
+
+  .btn-delete {
+    background-color: #ff4757;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-delete:hover {
+    background-color: #ff3838;
+    text-decoration: none;
+    color: white;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #1f1f1f 0%, #262626 100%);
+    border: 1px solid #00ffff20;
+    border-radius: 12px;
+  }
+
+  .empty-state i {
+    font-size: 60px;
+    color: #00ffff;
+    margin-bottom: 20px;
+    opacity: 0.5;
+  }
+
+  .empty-state h3 {
+    color: #00ffff;
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .empty-state p {
+    color: #b0bec5;
+    font-size: 16px;
+    margin-bottom: 25px;
+  }
+
+  .stats-summary {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    background: linear-gradient(135deg, #1f1f1f 0%, #262626 100%);
+    border: 1px solid #00ffff40;
+    border-left: 4px solid #00ffff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .stat-number {
+    color: #00ffff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .stat-label {
+    color: #b0bec5;
+    font-size: 12px;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .page-header h2 {
+      font-size: 24px;
+    }
+
+    .record-header {
+      flex-direction: column;
+    }
+
+    .record-actions {
+      flex-direction: column;
+    }
+
+    .btn-view,
+    .btn-delete {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+<div class="ehr-container">
+  <div class="page-header">
+    <h2><i class="fas fa-file-medical"></i> Electronic Health Records</h2>
+    <a href="/add-ehr" class="btn-add-record">
+      <i class="fas fa-plus"></i> Add New Record
+    </a>
+  </div>
+
+  {% if records %}
+  <div class="search-box">
+    <input
+      type="text"
+      class="search-input"
+      id="searchRecords"
+      placeholder="Search by patient name, doctor name, or diagnosis..." />
+  </div>
+
+  <div class="stats-summary">
+    <div class="stat-item">
+      <div class="stat-number">{{ records|length }}</div>
+      <div class="stat-label">Total Records</div>
+    </div>
+  </div>
+
+  <div class="records-list">
+    {% for r in records %}
+    <div class="record-card">
+      <div class="record-header">
+        <div class="record-title">
+          <div class="record-icon">
+            <i class="fas fa-folder-medical"></i>
+          </div>
+          <div class="record-info">
+            <h3>{{ r[1] }} - {{ r[2] }}</h3>
+            <div class="record-meta">
+              <div class="record-meta-item">
+                <i class="fas fa-user"></i>
+                <span>Patient: {{ r[1] }}</span>
+              </div>
+              <div class="record-meta-item">
+                <i class="fas fa-user-md"></i>
+                <span>Doctor: {{ r[2] }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="record-date">
+          <i class="fas fa-calendar"></i> {{ r[7] }}
+        </div>
+      </div>
+
+      <div class="record-content">
+        <div class="record-section">
+          <div class="record-label">
+            <i class="fas fa-stethoscope"></i> Diagnosis
+          </div>
+          <div class="record-value">{{ r[3] }}</div>
+        </div>
+        {% if r[4] %}
+        <div class="record-section">
+          <div class="record-label">
+            <i class="fas fa-prescription-bottle"></i> Treatment Plan
+          </div>
+          <div class="record-value">{{ r[4] }}</div>
+        </div>
+        {% endif %} {% if r[5] %}
+        <div class="record-section">
+          <div class="record-label">
+            <i class="fas fa-pills"></i> Medications
+          </div>
+          <div class="record-value">{{ r[5] }}</div>
+        </div>
+        {% endif %} {% if r[6] %}
+        <div class="record-section">
+          <div class="record-label">
+            <i class="fas fa-notes-medical"></i> Notes
+          </div>
+          <div class="record-value">{{ r[6] }}</div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="record-actions">
+        <a href="/ehr-record/{{ r[0] }}" class="btn-view">
+          <i class="fas fa-eye"></i> View Full Details
+        </a>
+        <a
+          href="/delete-ehr/{{ r[0] }}"
+          class="btn-delete"
+          onclick="return confirm('Delete this record?');">
+          <i class="fas fa-trash"></i> Delete
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-inbox"></i>
+    <h3>No Medical Records</h3>
+    <p>No electronic health records found. Start by adding a new record.</p>
+    <a href="/add-ehr" class="btn-add-record">
+      <i class="fas fa-plus"></i> Add Your First Record
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  const searchInput = document.getElementById("searchRecords");
+  if (searchInput) {
+    searchInput.addEventListener("keyup", function () {
+      const searchTerm = this.value.toLowerCase();
+      const records = document.querySelectorAll(".record-card");
+
+      records.forEach((record) => {
+        const text = record.textContent.toLowerCase();
+        record.style.display = text.includes(searchTerm) ? "" : "none";
+      });
+    });
+  }
+</script>
+
+{% endblock %}

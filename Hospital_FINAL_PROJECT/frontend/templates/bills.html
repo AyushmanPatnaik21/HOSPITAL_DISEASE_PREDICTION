@@ -1,0 +1,80 @@
+{% extends 'base.html' %} {% block title %}Billing Records - SmartMediHub{%
+endblock %} {% block content %}
+<div class="content-box">
+  <div
+    class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+    <div>
+      <h2 class="mb-1">Billing Records</h2>
+      <p class="text-muted mb-0">
+        View and manage generated bills for patients.
+      </p>
+    </div>
+
+    <div class="d-flex gap-2 mt-3 mt-md-0">
+      {% if session.get('role') in ['admin', 'doctor'] %}
+      <a href="/add-bill" class="btn btn-primary">
+        <i class="fas fa-plus-circle me-2"></i>Create Bill
+      </a>
+      {% endif %}
+      <input
+        id="billSearch"
+        class="form-control"
+        style="min-width: 240px"
+        placeholder="Search by patient or status" />
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-dark table-hover align-middle" id="billsTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Patient</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in bills %}
+        <tr data-search="{{ b[1] }} {{ b[3] }}">
+          <td>{{ b[0] }}</td>
+          <td>{{ b[1] }}</td>
+          <td>₹{{ b[2] }}</td>
+          <td>
+            {% if b[3] == 'Paid' %}
+            <span class="badge bg-success">Paid</span>
+            {% else %}
+            <span class="badge bg-warning text-dark">Unpaid</span>
+            {% endif %}
+          </td>
+          <td>{{ b[4] }}</td>
+          <td class="text-end">
+            {% if b[3] == 'Unpaid' %}
+            <a class="btn btn-sm btn-success" href="/pay-bill/{{ b[0] }}">
+              <i class="fas fa-check"></i> Mark Paid
+            </a>
+            {% else %}
+            <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  document
+    .getElementById("billSearch")
+    ?.addEventListener("input", function (evt) {
+      const filter = evt.target.value.toLowerCase();
+      document.querySelectorAll("#billsTable tbody tr").forEach((row) => {
+        const text = (row.getAttribute("data-search") || "").toLowerCase();
+        row.style.display = text.includes(filter) ? "" : "none";
+      });
+    });
+</script>
+{% endblock %}

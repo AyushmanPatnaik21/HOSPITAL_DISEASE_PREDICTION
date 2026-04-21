@@ -1,0 +1,71 @@
+{% extends 'base.html' %} {% block title %}Doctor Prescriptions - SmartMediHub{%
+endblock %} {% block content %}
+<div class="content-box">
+  <div
+    class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+    <div>
+      <h2 class="mb-1">Your Prescriptions</h2>
+      <p class="text-muted mb-0">
+        View the prescriptions you have authored for patients.
+      </p>
+    </div>
+    <a href="/doctor/add-prescription" class="btn btn-primary">
+      <i class="fas fa-prescription-bottle-medical me-2"></i>Create Prescription
+    </a>
+  </div>
+
+  {% if prescriptions %}
+  <div class="accordion" id="prescriptionAccordion">
+    {% for prescription in prescriptions %}
+    <div class="accordion-item bg-dark border-secondary mb-3">
+      <h2 class="accordion-header" id="presHead{{ prescription[0] }}">
+        <button
+          class="accordion-button collapsed bg-dark text-white"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#presCollapse{{ prescription[0] }}"
+          aria-expanded="false"
+          aria-controls="presCollapse{{ prescription[0] }}">
+          Prescription #{{ prescription[0] }} — {{ prescription[2] }} — {{
+          prescription[4][:10] }}
+        </button>
+      </h2>
+      <div
+        id="presCollapse{{ prescription[0] }}"
+        class="accordion-collapse collapse"
+        aria-labelledby="presHead{{ prescription[0] }}"
+        data-bs-parent="#prescriptionAccordion">
+        <div class="accordion-body">
+          <p><strong>Patient:</strong> {{ prescription[2] }}</p>
+          <p><strong>Notes:</strong> {{ prescription[3] or 'None' }}</p>
+
+          <div class="table-responsive">
+            <table class="table table-dark table-borderless mb-0">
+              <thead>
+                <tr>
+                  <th>Medicine</th>
+                  <th>Dosage</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in prescription.items %}
+                <tr>
+                  <td>{{ item[2] }}</td>
+                  <td>{{ item[3] }}</td>
+                  <td>{{ item[4] }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info">No prescriptions have been created yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,577 @@
+﻿{% extends 'base.html' %} {% block content %}
+
+<style>
+  .dashboard-wrapper {
+    padding: 20px 0;
+  }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .dashboard-sidebar {
+    background: rgba(16, 20, 40, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 28px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+  }
+
+  .sidebar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+
+  .sidebar-top h2 {
+    font-size: 1.8rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .sidebar-top p {
+    color: #9ab4ff;
+    font-size: 0.95rem;
+  }
+
+  .sidebar-nav {
+    display: grid;
+    gap: 12px;
+  }
+
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 16px 18px;
+    border-radius: 18px;
+    color: #e2ecff;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.03);
+    transition:
+      transform 0.25s ease,
+      background-color 0.25s ease;
+    font-weight: 600;
+  }
+
+  .sidebar-link:hover,
+  .sidebar-link.active {
+    transform: translateX(4px);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .sidebar-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 24px;
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #5567ff, #25c6ff);
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 18px 40px rgba(37, 198, 255, 0.18);
+  }
+
+  .dashboard-main {
+    background: rgba(10, 14, 30, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 32px;
+    padding: 32px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.35);
+  }
+
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .dashboard-header .heading {
+    display: grid;
+    gap: 12px;
+  }
+
+  .dashboard-header h1 {
+    color: #ffffff;
+    font-size: 2.3rem;
+    margin: 0;
+  }
+
+  .dashboard-header p {
+    color: #9ab4ff;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .role-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #d6e8ff;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+  }
+
+  .dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+    margin-bottom: 30px;
+  }
+
+  .stat-card {
+    position: relative;
+    min-height: 160px;
+    padding: 28px;
+    border-radius: 28px;
+    color: white;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  }
+
+  .stat-card h4 {
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+    opacity: 0.92;
+  }
+
+  .stat-card h2 {
+    font-size: 3.2rem;
+    margin: 0;
+    letter-spacing: -0.03em;
+  }
+
+  .stat-card::after {
+    content: "";
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    top: -40%;
+    left: -30%;
+    background: rgba(255, 255, 255, 0.08);
+    transform: rotate(35deg);
+    pointer-events: none;
+  }
+
+  .stat-card.card1 {
+    background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+  }
+
+  .stat-card.card2 {
+    background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
+  }
+
+  .stat-card.card3 {
+    background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+  }
+
+  .stat-card.card4 {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  }
+
+  .dashboard-charts {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 22px;
+  }
+
+  .dashboard-panel {
+    display: grid;
+    gap: 22px;
+  }
+
+  .dashboard-section {
+    display: block;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .table-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 24px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #dde6ff;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: left;
+    font-size: 0.95rem;
+  }
+
+  .data-table th {
+    color: #a5b8ff;
+    font-weight: 700;
+  }
+
+  .data-table tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .chart-box {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 24px;
+    min-height: 320px;
+  }
+
+  .chart-box canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  @media (max-width: 1100px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .dashboard-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 720px) {
+    .dashboard-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .dashboard-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .sidebar-top {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<div
+  class="dashboard-wrapper"
+  data-patients="{{ total_patients }}"
+  data-doctors="{{ total_doctors }}"
+  data-appointments="{{ total_appointments }}">
+  <div class="dashboard-grid">
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-top">
+        <div>
+          <h2>Hospital Overview</h2>
+          <p>Monitor key hospital metrics in one place.</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a
+          href="javascript:void(0)"
+          class="sidebar-link active"
+          data-section="overview">
+          <i class="fas fa-home"></i>
+          Overview
+        </a>
+        <a
+          href="javascript:void(0)"
+          class="sidebar-link"
+          data-section="doctors">
+          <i class="fas fa-user-md"></i>
+          Doctors
+        </a>
+        <a
+          href="javascript:void(0)"
+          class="sidebar-link"
+          data-section="patients">
+          <i class="fas fa-users"></i>
+          Patients
+        </a>
+        <a
+          href="javascript:void(0)"
+          class="sidebar-link"
+          data-section="appointments">
+          <i class="fas fa-calendar-check"></i>
+          Appointments
+        </a>
+        <a href="/bills" class="sidebar-link">
+          <i class="fas fa-receipt"></i>
+          Billing
+        </a>
+        <a href="/lab-tests" class="sidebar-link">
+          <i class="fas fa-vials"></i>
+          Lab Tests
+        </a>
+        <a href="/pharmacy" class="sidebar-link">
+          <i class="fas fa-pills"></i>
+          Pharmacy
+        </a>
+      </nav>
+
+      <a href="/ml-predict" class="sidebar-cta">
+        <i class="fas fa-robot me-2"></i>
+        AI Prediction
+      </a>
+    </aside>
+
+    <section class="dashboard-main">
+      <div class="dashboard-header">
+        <div class="heading">
+          <p class="text-info">Admin Panel</p>
+          {% if role == 'admin' %}
+          <h1>Admin Dashboard</h1>
+          {% elif role == 'doctor' %}
+          <h1>Doctor Dashboard</h1>
+          {% else %}
+          <h1>Patient Dashboard</h1>
+          {% endif %}
+        </div>
+        <span class="role-badge">{{ role | capitalize }}</span>
+      </div>
+
+      <div class="dashboard-stats">
+        <div class="stat-card card1">
+          <h4>Doctors</h4>
+          <h2>{{ total_doctors }}</h2>
+        </div>
+        <div class="stat-card card2">
+          <h4>Patients</h4>
+          <h2>{{ total_patients }}</h2>
+        </div>
+        <div class="stat-card card3">
+          <h4>Appointments</h4>
+          <h2>{{ total_appointments }}</h2>
+        </div>
+        <div class="stat-card card4">
+          <h4>Revenue</h4>
+          <h2>₹{{ total_revenue }}</h2>
+        </div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div id="overviewSection" class="dashboard-section">
+          {% if role == 'admin' %}
+          <div class="dashboard-charts">
+            <div class="chart-box">
+              <canvas id="barChart"></canvas>
+            </div>
+            <div class="chart-box">
+              <canvas id="pieChart"></canvas>
+            </div>
+          </div>
+          {% else %}
+          <div class="chart-box">
+            <p class="text-white">
+              Overview data is available only for the admin dashboard.
+            </p>
+          </div>
+          {% endif %}
+        </div>
+
+        <div id="doctorsSection" class="dashboard-section hidden">
+          <div class="table-card">
+            <h3>Doctor Directory</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Name</th>
+                  <th>Specialization</th>
+                  <th>Contact</th>
+                  <th>Availability</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for doctor in doctors %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>{{ doctor[1] }}</td>
+                  <td>{{ doctor[2] }}</td>
+                  <td>{{ doctor[3] }}</td>
+                  <td>{{ doctor[4] }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="5">No doctors available.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="patientsSection" class="dashboard-section hidden">
+          <div class="table-card">
+            <h3>Patient Directory</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Name</th>
+                  <th>Age</th>
+                  <th>Gender</th>
+                  <th>Contact</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for patient in patients %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>{{ patient[1] }}</td>
+                  <td>{{ patient[2] }}</td>
+                  <td>{{ patient[3] }}</td>
+                  <td>{{ patient[4] }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="5">No patients available.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="appointmentsSection" class="dashboard-section hidden">
+          <div class="table-card">
+            <h3>Appointment History</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Patient</th>
+                  <th>Doctor</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>{{ appointment[1] }}</td>
+                  <td>{{ appointment[2] }}</td>
+                  <td>{{ appointment[3] }}</td>
+                  <td>{{ appointment[4] }}</td>
+                  <td>{{ appointment[5] }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="6">No appointments available.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  var container = document.querySelector(".dashboard-wrapper");
+  var patients = parseInt(container.dataset.patients) || 0;
+  var doctors = parseInt(container.dataset.doctors) || 0;
+  var appointments = parseInt(container.dataset.appointments) || 0;
+
+  var overviewSection = document.getElementById("overviewSection");
+  var doctorsSection = document.getElementById("doctorsSection");
+  var patientsSection = document.getElementById("patientsSection");
+  var appointmentsSection = document.getElementById("appointmentsSection");
+  var sidebarLinks = document.querySelectorAll(".sidebar-link[data-section]");
+
+  function showSection(sectionId) {
+    sidebarLinks.forEach(function (link) {
+      link.classList.toggle("active", link.dataset.section === sectionId);
+    });
+
+    overviewSection.classList.toggle("hidden", sectionId !== "overview");
+    doctorsSection.classList.toggle("hidden", sectionId !== "doctors");
+    patientsSection.classList.toggle("hidden", sectionId !== "patients");
+    appointmentsSection.classList.toggle(
+      "hidden",
+      sectionId !== "appointments",
+    );
+  }
+
+  sidebarLinks.forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+      showSection(this.dataset.section);
+    });
+  });
+
+  var barChartElement = document.getElementById("barChart");
+  var pieChartElement = document.getElementById("pieChart");
+
+  if (barChartElement && pieChartElement) {
+    new Chart(barChartElement, {
+      type: "bar",
+      data: {
+        labels: ["Patients", "Doctors", "Appointments"],
+        datasets: [
+          {
+            label: "Hospital Data",
+            data: [patients, doctors, appointments],
+            backgroundColor: ["#ff416c", "#36d1dc", "#f7971e"],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          y: { beginAtZero: true },
+        },
+      },
+    });
+
+    new Chart(pieChartElement, {
+      type: "doughnut",
+      data: {
+        labels: ["Patients", "Doctors"],
+        datasets: [
+          {
+            data: [patients, doctors],
+            backgroundColor: ["#ff416c", "#36d1dc"],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: "bottom" },
+        },
+      },
+    });
+  }
+</script>
+
+{% endblock %}

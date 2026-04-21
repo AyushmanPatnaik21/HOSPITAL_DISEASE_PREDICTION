@@ -1,0 +1,166 @@
+{% extends 'base.html' %} {% block title %}Billing Management - SmartMediHub{%
+endblock %} {% block content %}
+<div class="container-fluid">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="mb-1">Billing Management</h1>
+          <p class="text-white-50">Manage patient bills and payment status</p>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="/admin/dashboard" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+          </a>
+          <a href="/admin/create-bill" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Create Bill
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Billing Statistics -->
+  <div class="row mb-4">
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="card bg-dark border-0 h-100">
+        <div class="card-body">
+          <h6 class="text-light fw-bold mb-2">Total Bills</h6>
+          <h3 class="mb-0 text-primary">{{ stats.total_bills }}</h3>
+          <small class="text-secondary d-block mt-2">All bills created</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="card bg-dark border-0 h-100">
+        <div class="card-body">
+          <h6 class="text-light fw-bold mb-2">Paid</h6>
+          <h3 class="mb-0 text-success">{{ stats.paid_bills }}</h3>
+          <small class="text-secondary d-block mt-2">Completed payments</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="card bg-dark border-0 h-100">
+        <div class="card-body">
+          <h6 class="text-light fw-bold mb-2">Unpaid</h6>
+          <h3 class="mb-0 text-danger">{{ stats.unpaid_bills }}</h3>
+          <small class="text-secondary d-block mt-2">Awaiting payment</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="card bg-dark border-0 h-100">
+        <div class="card-body">
+          <h6 class="text-light fw-bold mb-2">Revenue</h6>
+          <h3 class="mb-0 text-info">
+            ${{ "%.2f"|format(stats.total_revenue) }}
+          </h3>
+          <small class="text-secondary d-block mt-2">From paid bills</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bills Table -->
+  {% if bills %}
+  <div class="card bg-dark border-0 shadow">
+    <div class="card-header bg-secondary">
+      <h5 class="mb-0">
+        <i class="fas fa-file-invoice-dollar me-2"></i>All Bills
+      </h5>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0">
+        <thead class="table-secondary">
+          <tr>
+            <th>Bill ID</th>
+            <th>Patient</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Items</th>
+            <th>Date</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for bill in bills %}
+          <tr>
+            <td>
+              <span class="badge bg-secondary">#{{ bill[0] }}</span>
+            </td>
+            <td>
+              <strong>{{ bill[2] }}</strong>
+              <br />
+              <small class="text-muted">Patient ID: {{ bill[1] }}</small>
+            </td>
+            <td>
+              <strong class="text-success"
+                >${{ "%.2f"|format(bill[3]) }}</strong
+              >
+            </td>
+            <td>
+              {% if bill[4] == 'Paid' %}
+              <span class="badge bg-success">
+                <i class="fas fa-check-circle me-1"></i>Paid
+              </span>
+              {% else %}
+              <span class="badge bg-danger">
+                <i class="fas fa-exclamation-circle me-1"></i>Unpaid
+              </span>
+              {% endif %}
+            </td>
+            <td>
+              <span class="badge bg-info">{{ bill[6] }} items</span>
+            </td>
+            <td>
+              <small class="text-muted">{{ bill[5][:10] }}</small>
+            </td>
+            <td class="text-center">
+              <a
+                href="/admin/bill-detail/{{ bill[0] }}"
+                class="btn btn-sm btn-primary">
+                <i class="fas fa-eye me-1"></i>View
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-info" role="alert">
+    <i class="fas fa-info-circle me-2"></i>
+    <strong>No Bills</strong> - No bills have been created yet.
+    <a href="/admin/create-bill" class="btn btn-sm btn-primary ms-2"
+      >Create First Bill</a
+    >
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  // Initialize stats on page load
+  document.addEventListener("DOMContentLoaded", function () {
+    // Auto-refresh every 30 seconds
+    setInterval(function () {
+      location.reload();
+    }, 30000);
+  });
+</script>
+
+<style>
+  .card {
+    transition: transform 0.2s;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 255, 255, 0.15) !important;
+  }
+</style>
+{% endblock %}

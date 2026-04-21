@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome</title>
+
+    <!-- Redirect after 5 seconds -->
+    <meta http-equiv="refresh" content="5;url={{ url_for('home') }}" />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background: url('{{ url_for("static", filename="Images/HOSPITAL_LOGO.png") }}')
+          no-repeat center center fixed;
+        background-size: contain;
+        position: relative;
+        overflow: hidden;
+        font-family: "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 10px 0;
+        font-weight: bold;
+        opacity: 0;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+      }
+
+      h1 {
+        font-size: 80px;
+        color: #00ffff; /* Bright Cyan */
+        animation: slideFromLeft 2s ease-out forwards;
+      }
+
+      h2 {
+        font-size: 40px;
+        color: #f7e600; /* Bright Yellow */
+        animation: slideFromTop 2s ease-out forwards;
+        animation-delay: 1s;
+      }
+
+      h3 {
+        font-size: 80px;
+        color: #00ffff; /* Same as h1 */
+        animation: fadeInUp 2s ease-out forwards;
+        animation-delay: 2s;
+      }
+
+      @keyframes slideFromLeft {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideFromTop {
+        from {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          transform: translateY(50%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="overlay">
+      <h1>Welcome</h1>
+      <h2>to</h2>
+      <h3>The Good Living Hospital</h3>
+    </div>
+  </body>
+</html>

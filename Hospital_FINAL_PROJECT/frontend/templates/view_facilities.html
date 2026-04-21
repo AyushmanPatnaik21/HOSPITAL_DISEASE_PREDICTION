@@ -1,0 +1,396 @@
+{% extends "base.html" %} {% block content %}
+<style>
+  :root {
+    --card-bg-top: rgba(255, 255, 255, 0.02);
+    --card-bg-bottom: rgba(0, 0, 0, 0.2);
+    --card-surface: linear-gradient(
+      180deg,
+      var(--card-bg-top),
+      var(--card-bg-bottom)
+    );
+    --text: #e8eef0;
+    --muted: rgba(255, 255, 255, 0.72);
+    --glass-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+  }
+
+  /* ---------- Base Card (uniform surface) ---------- */
+  .facility-card {
+    border-radius: 18px;
+    border: none;
+    color: var(--text);
+    background: var(--card-surface);
+    padding: 28px;
+    transition: transform 0.32s cubic-bezier(0.2, 0.9, 0.2, 1),
+      box-shadow 0.32s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--glass-shadow);
+    min-height: 220px;
+  }
+  .facility-card::before {
+    /* subtle sheen that appears on hover */
+    content: "";
+    position: absolute;
+    top: -60%;
+    left: -40%;
+    width: 220%;
+    height: 220%;
+    background: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.03),
+      rgba(255, 255, 255, 0)
+    );
+    transform: rotate(25deg);
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+  }
+  .facility-card:hover::before {
+    opacity: 1;
+  }
+
+  .facility-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 26px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  /* small colored bar on left for identity (subtle) */
+  .facility-card::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 18px;
+    bottom: 18px;
+    width: 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.04);
+    transition: background 0.3s ease;
+  }
+
+  /* ---------- Icon + Accent handling (only these change per facility) ---------- */
+  .facility-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    font-size: 36px;
+    margin-bottom: 12px;
+    color: white;
+    box-shadow: 0 8px 24px rgba(2, 6, 23, 0.6);
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+    position: relative;
+    z-index: 2;
+  }
+  .facility-card:hover .facility-icon {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 18px 36px rgba(2, 6, 23, 0.6);
+  }
+
+  /* icon background is a soft gradient using CSS variable --accent (set per class below) */
+  .facility-icon {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.02)
+    );
+  }
+  /* change the left bar and icon accent by setting --accent on the card container */
+  .facility-card[data-accent]::after {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.01)
+    );
+  }
+  .facility-card[data-accent] .facility-icon {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.03),
+      rgba(255, 255, 255, 0.01)
+    );
+  }
+
+  /* Accent classes — each sets a weaker, desaturated accent color to avoid visual noise */
+  .bg-emergency {
+    --accent: linear-gradient(135deg, #ff8b86 0%, #ffb99f 100%);
+  }
+  .bg-opd {
+    --accent: linear-gradient(135deg, #7fb7ff 0%, #bfeeff 100%);
+  }
+  .bg-icu {
+    --accent: linear-gradient(135deg, #ff9aa2 0%, #ff7b6b 100%);
+  }
+  .bg-diagnostics {
+    --accent: linear-gradient(135deg, #9fe8c9 0%, #6bd4a8 100%);
+  }
+  .bg-pharmacy {
+    --accent: linear-gradient(135deg, #ffd89b 0%, #ffcc66 100%);
+  }
+  .bg-wards {
+    --accent: linear-gradient(135deg, #9fd9ff 0%, #67b5ff 100%);
+  }
+  .bg-maternity {
+    --accent: linear-gradient(135deg, #ffd0df 0%, #ffb6c1 100%);
+  }
+  .bg-clinics {
+    --accent: linear-gradient(135deg, #c7a3ff 0%, #8e6bff 100%);
+  }
+  .bg-cafeteria {
+    --accent: linear-gradient(135deg, #ffbb95 0%, #ff8b7a 100%);
+  }
+  .bg-security {
+    --accent: linear-gradient(135deg, #88e0b4 0%, #39c08a 100%);
+  }
+  .bg-physio {
+    --accent: linear-gradient(135deg, #8fe2ff 0%, #6be6b8 100%);
+  }
+
+  /* apply accent to icon and left bar (subtle) */
+  .bg-emergency .facility-icon,
+  .bg-opd .facility-icon,
+  .bg-icu .facility-icon,
+  .bg-diagnostics .facility-icon,
+  .bg-pharmacy .facility-icon,
+  .bg-wards .facility-icon,
+  .bg-maternity .facility-icon,
+  .bg-clinics .facility-icon,
+  .bg-cafeteria .facility-icon,
+  .bg-security .facility-icon,
+  .bg-physio .facility-icon {
+    background: var(--accent);
+    opacity: 0.95;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+  }
+  .bg-emergency::after {
+    background: linear-gradient(180deg, #ff8b86, #ffb99f);
+    opacity: 0.14;
+  }
+  .bg-opd::after {
+    background: linear-gradient(180deg, #7fb7ff, #bfeeff);
+    opacity: 0.1;
+  }
+  .bg-icu::after {
+    background: linear-gradient(180deg, #ff9aa2, #ff7b6b);
+    opacity: 0.12;
+  }
+  .bg-diagnostics::after {
+    background: linear-gradient(180deg, #9fe8c9, #6bd4a8);
+    opacity: 0.1;
+  }
+  .bg-pharmacy::after {
+    background: linear-gradient(180deg, #ffd89b, #ffcc66);
+    opacity: 0.1;
+  }
+  .bg-wards::after {
+    background: linear-gradient(180deg, #9fd9ff, #67b5ff);
+    opacity: 0.1;
+  }
+  .bg-maternity::after {
+    background: linear-gradient(180deg, #ffd0df, #ffb6c1);
+    opacity: 0.08;
+  }
+  .bg-clinics::after {
+    background: linear-gradient(180deg, #c7a3ff, #8e6bff);
+    opacity: 0.09;
+  }
+  .bg-cafeteria::after {
+    background: linear-gradient(180deg, #ffbb95, #ff8b7a);
+    opacity: 0.09;
+  }
+  .bg-security::after {
+    background: linear-gradient(180deg, #88e0b4, #39c08a);
+    opacity: 0.1;
+  }
+  .bg-physio::after {
+    background: linear-gradient(180deg, #8fe2ff, #6be6b8);
+    opacity: 0.1;
+  }
+
+  /* ---------- Text styling ---------- */
+  .facility-card h5 {
+    font-weight: 700;
+    margin-top: 6px;
+    color: var(--text);
+  }
+  .facility-card p {
+    color: var(--muted);
+    font-size: 15px;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 768px) {
+    .facility-card {
+      padding: 20px;
+      min-height: 180px;
+    }
+    .facility-icon {
+      width: 72px;
+      height: 72px;
+      font-size: 32px;
+    }
+  }
+
+  /* reduced motion accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .facility-card,
+    .facility-icon {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<div class="container py-5">
+  <!-- Section Heading -->
+  <div class="text-center mb-5">
+    <h2 class="fw-bold text-primary" data-aos="fade-up">
+      🏥 Our Hospital Facilities
+    </h2>
+    <p
+      class="mt-2"
+      style="color: #e6f7fa"
+      data-aos="fade-up"
+      data-aos-delay="100">
+      We provide world-class healthcare with advanced facilities and
+      compassionate care.
+    </p>
+  </div>
+
+  <!-- Facilities Grid -->
+  <div class="row g-4">
+    <!-- Emergency -->
+    <div class="col-md-4" data-aos="zoom-in">
+      <div class="card facility-card bg-emergency text-center p-4 text-white">
+        <div class="facility-icon"><i class="bi bi-ambulance"></i></div>
+        <h5>24×7 Emergency</h5>
+        <p>
+          Open around the clock with quick response teams, ambulance service,
+          and advanced trauma care.
+        </p>
+      </div>
+    </div>
+
+    <!-- OPD -->
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+      <div class="card facility-card bg-opd text-center p-4 text-white">
+        <div class="facility-icon"><i class="bi bi-person-lines-fill"></i></div>
+        <h5>Outpatient Department</h5>
+        <p>
+          State-of-the-art OPD with specialists offering consultation across
+          multiple medical fields.
+        </p>
+      </div>
+    </div>
+
+    <!-- ICU -->
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+      <div class="card facility-card bg-icu text-center p-4 text-white">
+        <div class="facility-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+        <h5>Intensive Care Unit</h5>
+        <p>
+          Advanced ICU facilities with life support systems and critical care
+          specialists.
+        </p>
+      </div>
+    </div>
+
+    <!-- Diagnostics -->
+    <div class="col-md-4" data-aos="zoom-in">
+      <div class="card facility-card bg-diagnostics text-center p-4 text-white">
+        <div class="facility-icon"><i class="bi bi-clipboard2-pulse"></i></div>
+        <h5>Diagnostics & Lab</h5>
+        <p>
+          Equipped labs, radiology, and imaging services for accurate medical
+          testing.
+        </p>
+      </div>
+    </div>
+
+    <!-- Pharmacy -->
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+      <div class="card facility-card bg-pharmacy text-center p-4 text-white">
+        <div class="facility-icon"><i class="bi bi-capsule-pill"></i></div>
+        <h5>In-House Pharmacy</h5>
+        <p>
+          24/7 pharmacy with genuine medicines and prescription guidance for
+          patients.
+        </p>
+      </div>
+    </div>
+
+    <!-- Wards -->
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+      <div class="card facility-card bg-wards text-center p-4 text-white">
+        <div class="facility-icon"><i class="bi bi-hospital"></i></div>
+        <h5>Patient Wards</h5>
+        <p>
+          Comfortable general wards, private rooms, and deluxe suites with
+          modern amenities.
+        </p>
+      </div>
+    </div>
+
+    <!-- Maternity & Child Care -->
+    <div class="col-md-4" data-aos="zoom-in">
+      <div class="card facility-card bg-maternity text-center p-4 text-white">
+        <div class="facility-icon"><i class="bi bi-baby"></i></div>
+        <h5>Maternity & Child Care</h5>
+        <p>
+          Dedicated maternity wards, neonatal ICU, and pediatric specialists for
+          safe care.
+        </p>
+      </div>
+    </div>
+
+    <!-- Specialty Clinics -->
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+      <div class="card facility-card bg-clinics text-center p-4 text-white">
+        <div class="facility-icon"><i class="bi bi-heart"></i></div>
+        <h5>Specialty Clinics</h5>
+        <p>
+          Cardiology, Neurology, Oncology, and other specialty clinics with
+          expert doctors.
+        </p>
+      </div>
+    </div>
+
+    <!-- Cafeteria -->
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+      <div class="card facility-card bg-cafeteria text-center p-4 text-white">
+        <div class="facility-icon"><i class="bi bi-cup-straw"></i></div>
+        <h5>Cafeteria & Canteen</h5>
+        <p>
+          Healthy and hygienic meals available for patients, staff, and
+          visitors.
+        </p>
+      </div>
+    </div>
+
+    <!-- Security & Parking -->
+    <div class="col-md-4" data-aos="zoom-in">
+      <div class="card facility-card bg-security text-center p-4 text-white">
+        <div class="facility-icon"><i class="bi bi-shield-lock"></i></div>
+        <h5>Security & Parking</h5>
+        <p>
+          24/7 CCTV surveillance, security staff, and ample parking facilities.
+        </p>
+      </div>
+    </div>
+
+    <!-- Rehabilitation & Physiotherapy -->
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+      <div class="card facility-card bg-physio text-center p-4 text-white">
+        <div class="facility-icon"><i class="bi bi-person-walking"></i></div>
+        <h5>Rehabilitation & Physiotherapy</h5>
+        <p>
+          Modern physiotherapy and rehab center for faster patient recovery.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

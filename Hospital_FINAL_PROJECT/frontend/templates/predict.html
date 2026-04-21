@@ -1,0 +1,987 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="modern-prediction-container">
+  <div class="prediction-wrapper">
+    <div class="prediction-header">
+      <div class="header-content">
+        <div class="header-icon">
+          <i class="fas fa-brain"></i>
+        </div>
+        <div class="header-text">
+          <h1>AI Health Prediction</h1>
+          <p>
+            Intelligent symptom analysis powered by advanced machine learning
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card input-card" data-aos="fade-up">
+      <div class="glass-card-header">
+        <div class="header-icon-small">
+          <i class="fas fa-microscope"></i>
+        </div>
+        <h2>Symptom Analysis</h2>
+        <span class="glass-pill">Describe symptoms naturally</span>
+      </div>
+      <div class="glass-card-body">
+        <form method="POST" id="symptomChatForm" autocomplete="off">
+          <div class="input-group-modern">
+            <label for="symptoms" class="modern-label">
+              Symptom Input
+              <span class="badge-modern">AI Live</span>
+            </label>
+            <textarea
+              class="modern-textarea"
+              id="symptoms"
+              name="symptoms"
+              rows="4"
+              placeholder="e.g., I've had a cough and fever for the past few days"
+              required
+              autocomplete="off">
+{{ symptoms_input or '' }}</textarea
+            >
+            <div
+              id="suggestionsList"
+              class="suggestions-dropdown"
+              style="display: none"></div>
+            <div class="input-hint">
+              <i class="fas fa-lightbulb"></i>
+              Provide at least 2–3 symptoms for best results
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-modern-primary">
+              <span>Analyze Symptoms</span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% if chat_history %}
+    <div
+      class="glass-card analysis-card"
+      data-aos="fade-up"
+      data-aos-delay="80">
+      <div class="glass-card-header">
+        <div class="header-icon-small">
+          <i class="fas fa-brain"></i>
+        </div>
+        <h2>AI Analysis</h2>
+      </div>
+      <div class="glass-card-body">
+        <div class="analysis-summary">
+          Based on the symptoms you entered, the AI is generating the most
+          likely outcomes and specialist recommendation.
+        </div>
+        <div class="modern-chat-box" id="chatBox">
+          {% for message in chat_history %} {% if message.role == 'user' %}
+          <div class="chat-message user-message">
+            <div class="message-avatar"><i class="fas fa-user"></i></div>
+            <div class="message-content">
+              <div class="message-label">Your Symptoms</div>
+              <div class="message-text">{{ message.text }}</div>
+            </div>
+          </div>
+          {% else %}
+          <div class="chat-message ai-message">
+            <div class="message-avatar"><i class="fas fa-robot"></i></div>
+            <div class="message-content">
+              <div class="message-label">AI Analysis</div>
+              <div class="message-text">{{ message.text|safe }}</div>
+            </div>
+          </div>
+          {% endif %} {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %} {% if predictions_list %}
+    <div
+      class="glass-card predictions-card"
+      data-aos="fade-up"
+      data-aos-delay="140">
+      <div class="glass-card-header">
+        <div class="header-icon-small">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+        <h2>Top Predictions</h2>
+        {% if severity %}
+        <span class="severity-badge severity-{{ severity|lower }}"
+          >{{ severity }} Severity</span
+        >
+        {% endif %}
+      </div>
+      <div class="glass-card-body">
+        <div class="predictions-list">
+          {% for prediction in predictions_list %} {% set prediction_severity =
+          'High' if prediction.confidence_value >= 85 else 'Medium' if
+          prediction.confidence_value >= 60 else 'Low' %}
+          <div
+            class="prediction-item"
+            data-aos="fade-up"
+            data-aos-delay="{{ loop.index0 * 50 }}">
+            <div class="prediction-header-row">
+              <div class="prediction-rank">
+                <span class="rank-number">{{ loop.index }}</span>
+              </div>
+              <div class="prediction-info">
+                <h3 class="prediction-disease">{{ prediction.disease }}</h3>
+                <p class="prediction-specialist">
+                  <i class="fas fa-user-md"></i> {{ prediction.doctor }}
+                </p>
+              </div>
+              <div class="prediction-tags">
+                <span
+                  class="prediction-severity prediction-severity-{{ prediction_severity|lower }}"
+                  >{{ prediction_severity }}</span
+                >
+                <span class="confidence-badge"
+                  ><span class="confidence-value"
+                    >{{ prediction.confidence }}</span
+                  ></span
+                >
+              </div>
+            </div>
+            <div class="confidence-bar-container">
+              <div
+                class="confidence-bar"
+                style="width: {{ prediction.confidence_value }}%"></div>
+            </div>
+            <div class="prediction-explanation">
+              <i class="fas fa-lightbulb"></i>
+              <p>{{ prediction.explanation }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modern-alert alert-warning"
+      data-aos="fade-up"
+      data-aos-delay="200">
+      <div class="alert-icon"><i class="fas fa-triangle-exclamation"></i></div>
+      <div class="alert-content">
+        <h4>Important Medical Disclaimer</h4>
+        <p>
+          This AI prediction is
+          <strong>for informational purposes only</strong> and should not
+          replace professional medical diagnosis.
+        </p>
+        <p>
+          Please consult a qualified healthcare professional before making
+          medical decisions.
+        </p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .modern-prediction-container {
+    min-height: calc(100vh - 100px);
+    background:
+      radial-gradient(
+        circle at top left,
+        rgba(14, 165, 233, 0.14),
+        transparent 18%
+      ),
+      radial-gradient(
+        circle at bottom right,
+        rgba(59, 130, 246, 0.12),
+        transparent 16%
+      ),
+      linear-gradient(160deg, #020617 0%, #07101e 45%, #02030a 100%);
+    padding: 3rem 0;
+    margin-top: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .modern-prediction-container::before {
+    content: "";
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: rgba(14, 165, 233, 0.08);
+    filter: blur(110px);
+    top: -80px;
+    left: -80px;
+    pointer-events: none;
+  }
+
+  .modern-prediction-container::after {
+    content: "";
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.08);
+    filter: blur(90px);
+    bottom: -70px;
+    right: -50px;
+    pointer-events: none;
+  }
+
+  .prediction-wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .prediction-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #f8fafc;
+  }
+
+  .header-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1.5rem 2rem;
+    border-radius: 30px;
+    background: rgba(15, 23, 42, 0.66);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 24px 80px rgba(6, 182, 212, 0.12);
+    flex-wrap: wrap;
+  }
+
+  .header-icon {
+    width: 92px;
+    height: 92px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 0 44px rgba(6, 182, 212, 0.18);
+  }
+
+  .header-icon i {
+    font-size: 2.8rem;
+    color: #06b6d4;
+    text-shadow: 0 0 18px rgba(6, 182, 212, 0.8);
+  }
+
+  .header-text h1 {
+    font-size: clamp(2rem, 3vw, 3.2rem);
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.8px;
+  }
+
+  .header-text p {
+    font-size: 1rem;
+    color: #cbd5e1;
+    margin: 0.9rem 0 0;
+    line-height: 1.7;
+  }
+
+  .glass-card {
+    position: relative;
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(22px);
+    border: 1px solid rgba(56, 189, 248, 0.18);
+    border-radius: 28px;
+    box-shadow: 0 22px 60px rgba(3, 37, 65, 0.4);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    transition:
+      transform 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .glass-card::before,
+  .glass-card::after {
+    content: "";
+    position: absolute;
+    border-radius: 999px;
+    pointer-events: none;
+  }
+
+  .glass-card::before {
+    width: 120%;
+    height: 120%;
+    top: -40%;
+    left: -40%;
+    background: radial-gradient(
+      circle,
+      rgba(14, 165, 233, 0.12),
+      transparent 28%
+    );
+  }
+
+  .glass-card::after {
+    width: 18px;
+    height: 18px;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: rgba(6, 182, 212, 0.45);
+    box-shadow: 0 0 28px rgba(6, 182, 212, 0.45);
+  }
+
+  .glass-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(6, 182, 212, 0.34);
+    box-shadow: 0 28px 72px rgba(6, 182, 212, 0.18);
+  }
+
+  .glass-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 1.8rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  }
+
+  .glass-card-header h2 {
+    margin: 0;
+    font-size: 1.35rem;
+    color: #e2e8f0;
+  }
+
+  .glass-card-body {
+    padding: 2rem 2rem 2.2rem;
+  }
+
+  .header-icon-small {
+    font-size: 1.5rem;
+    color: #0ea5e9;
+  }
+
+  .glass-pill {
+    margin-left: auto;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(6, 182, 212, 0.14);
+    color: #7dd3fc;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+  }
+
+  .input-group-modern {
+    margin-bottom: 1.5rem;
+  }
+
+  .modern-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 0.75rem;
+  }
+
+  .badge-modern {
+    background: linear-gradient(
+      135deg,
+      rgba(6, 182, 212, 0.18),
+      rgba(14, 165, 233, 0.18)
+    );
+    color: #cfeeff;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.65px;
+    text-transform: uppercase;
+  }
+
+  .modern-textarea {
+    width: 100%;
+    min-height: 150px;
+    background: rgba(15, 23, 42, 0.68);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 18px;
+    padding: 1.2rem 1.25rem;
+    color: #f8fafc;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.7;
+    resize: vertical;
+    transition: all 0.35s ease;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  }
+
+  .modern-textarea:focus {
+    outline: none;
+    border-color: #06b6d4;
+    background: rgba(15, 23, 42, 0.86);
+    box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.12);
+  }
+
+  .modern-textarea::placeholder {
+    color: rgba(226, 232, 240, 0.45);
+  }
+
+  .input-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.92rem;
+    margin-top: 0.85rem;
+  }
+
+  .input-hint i {
+    color: #38bdf8;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .btn-modern-primary {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #22d3ee, #06b6d4);
+    border: none;
+    color: white;
+    padding: 1rem 2.2rem;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      filter 0.3s ease;
+    box-shadow: 0 18px 50px rgba(6, 182, 212, 0.24);
+  }
+
+  .btn-modern-primary::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 220%;
+    height: 220%;
+    background: rgba(255, 255, 255, 0.08);
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    transition: transform 0.45s ease;
+  }
+
+  .btn-modern-primary:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+    box-shadow: 0 20px 56px rgba(6, 182, 212, 0.32);
+  }
+
+  .btn-modern-primary:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .btn-modern-primary:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 12px 28px rgba(6, 182, 212, 0.18);
+  }
+
+  .suggestions-dropdown {
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    background: rgba(15, 23, 42, 0.94);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+  }
+
+  .suggestion-item {
+    cursor: pointer;
+    padding: 0.85rem 1rem;
+    color: #e2e8f0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+    transition: all 0.2s ease;
+  }
+
+  .suggestion-item:hover,
+  .suggestion-item.selected {
+    background: rgba(6, 182, 212, 0.12);
+    color: #7dd3fc;
+  }
+
+  .analysis-summary {
+    color: #cbd5e1;
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+  }
+
+  .modern-chat-box {
+    min-height: 180px;
+    max-height: 380px;
+    overflow-y: auto;
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.12);
+  }
+
+  .modern-chat-box::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .modern-chat-box::-webkit-scrollbar-track {
+    background: rgba(148, 163, 184, 0.08);
+    border-radius: 10px;
+  }
+
+  .modern-chat-box::-webkit-scrollbar-thumb {
+    background: rgba(6, 182, 212, 0.4);
+    border-radius: 10px;
+  }
+
+  .modern-chat-box::-webkit-scrollbar-thumb:hover {
+    background: rgba(6, 182, 212, 0.65);
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 250px;
+    color: #7dd3fc;
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.45;
+  }
+
+  .empty-text {
+    font-size: 1rem;
+    margin: 0;
+    color: #cbd5e1;
+  }
+
+  .chat-message {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    animation: slideIn 0.25s ease;
+  }
+
+  .user-message {
+    flex-direction: row-reverse;
+  }
+
+  .message-avatar {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    background: rgba(6, 182, 212, 0.12);
+    color: #38bdf8;
+    box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.14);
+  }
+
+  .user-message .message-avatar {
+    background: linear-gradient(
+      135deg,
+      rgba(6, 182, 212, 0.16),
+      rgba(14, 165, 233, 0.16)
+    );
+    color: #ffffff;
+  }
+
+  .ai-message .message-avatar {
+    background: rgba(6, 182, 212, 0.2);
+    color: #06b6d4;
+  }
+
+  .message-content {
+    flex: 1;
+  }
+
+  .message-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #7dd3fc;
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .message-text {
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.14);
+    padding: 0.95rem 1rem;
+    border-radius: 16px;
+    color: #e2e8f0;
+    line-height: 1.7;
+  }
+
+  .user-message .message-text {
+    background: rgba(14, 165, 233, 0.12);
+    border-color: rgba(14, 165, 233, 0.22);
+  }
+
+  .predictions-list {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .prediction-item {
+    position: relative;
+    background: rgba(8, 15, 35, 0.92);
+    border: 1px solid rgba(6, 182, 212, 0.16);
+    border-radius: 22px;
+    padding: 1.65rem;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  .prediction-item::before {
+    content: "";
+    position: absolute;
+    left: 1.6rem;
+    right: 1.6rem;
+    top: 0;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(14, 165, 233, 0.8), transparent);
+    border-radius: 999px;
+  }
+
+  .prediction-item:hover {
+    transform: translateY(-3px);
+    border-color: rgba(6, 182, 212, 0.32);
+    box-shadow: 0 22px 48px rgba(6, 182, 212, 0.16);
+  }
+
+  .prediction-header-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .rank-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+    color: white;
+    font-weight: 800;
+    font-size: 1.05rem;
+  }
+
+  .prediction-info {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .prediction-disease {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #eff6ff;
+    margin: 0 0 0.35rem 0;
+  }
+
+  .prediction-specialist {
+    font-size: 0.95rem;
+    color: #a5f3fc;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .prediction-tags {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .confidence-badge {
+    background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+    padding: 0.55rem 1rem;
+    border-radius: 14px;
+    box-shadow: 0 10px 20px rgba(6, 182, 212, 0.16);
+  }
+
+  .confidence-value {
+    font-weight: 700;
+    color: white;
+    font-size: 1rem;
+  }
+
+  .confidence-bar-container {
+    width: 100%;
+    height: 12px;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    box-shadow: inset 0 0 8px rgba(6, 182, 212, 0.2);
+  }
+
+  .confidence-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #0ea5e9, #22d3ee);
+    border-radius: 999px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.35);
+  }
+
+  .prediction-explanation {
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    background: rgba(6, 182, 212, 0.07);
+    padding: 1.1rem 1.2rem;
+    border-radius: 14px;
+    border-left: 3px solid #06b6d4;
+  }
+
+  .prediction-explanation i {
+    color: #06b6d4;
+    font-size: 1.2rem;
+  }
+
+  .prediction-explanation p {
+    margin: 0;
+    color: #dbeafe;
+    font-size: 0.96rem;
+    line-height: 1.7;
+  }
+
+  .severity-badge,
+  .prediction-severity {
+    font-size: 0.78rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.55px;
+    text-transform: uppercase;
+  }
+
+  .severity-high,
+  .prediction-severity-high {
+    background: rgba(239, 68, 68, 0.14);
+    color: #fecaca;
+  }
+
+  .severity-medium,
+  .prediction-severity-medium {
+    background: rgba(245, 158, 11, 0.14);
+    color: #fde68a;
+  }
+
+  .severity-low,
+  .prediction-severity-low {
+    background: rgba(34, 197, 94, 0.14);
+    color: #bbf7d0;
+  }
+
+  .modern-alert {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 22px;
+    padding: 1.75rem;
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    box-shadow: 0 24px 60px rgba(245, 158, 11, 0.14);
+  }
+
+  .alert-icon {
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: rgba(253, 224, 71, 0.14);
+    color: #f59e0b;
+    font-size: 1.4rem;
+  }
+
+  .alert-content h4 {
+    color: #f97316;
+    font-weight: 800;
+    margin: 0 0 0.6rem 0;
+    letter-spacing: -0.3px;
+  }
+
+  .alert-content p {
+    color: #f8fafc;
+    margin: 0;
+    line-height: 1.75;
+  }
+
+  @media (max-width: 768px) {
+    .header-content {
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+    }
+
+    .header-text h1 {
+      font-size: 2rem;
+    }
+
+    .header-text p {
+      font-size: 0.95rem;
+    }
+
+    .glass-card-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .form-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .btn-modern-primary {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .modern-chat-box,
+    .glass-card-body {
+      padding: 1.25rem;
+    }
+
+    .prediction-header-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .prediction-tags {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .prediction-explanation {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const symptomForm = document.getElementById("symptomChatForm");
+  const analyzeButton = document.querySelector(".btn-modern-primary");
+  const chatBox = document.getElementById("chatBox");
+  const suggestionsList = document.getElementById("suggestionsList");
+  const symptomsInput = document.getElementById("symptoms");
+
+  symptomForm?.addEventListener("submit", function () {
+    if (!analyzeButton) return;
+    analyzeButton.disabled = true;
+    analyzeButton.innerHTML =
+      '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+  });
+
+  symptomsInput?.addEventListener("input", async function () {
+    const lastWord = this.value
+      .split(/[,\s]+/)
+      .pop()
+      .trim();
+    if (lastWord.length < 2) {
+      suggestionsList.style.display = "none";
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/api/symptom-suggestions?q=${encodeURIComponent(lastWord)}&limit=8`,
+      );
+      const data = await response.json();
+
+      if (data.suggestions && data.suggestions.length > 0) {
+        suggestionsList.innerHTML = data.suggestions
+          .map(
+            (suggestion) =>
+              `<div class="suggestion-item" onclick="addSuggestion('${suggestion}')"><i class="fas fa-plus-circle"></i> ${suggestion.replace(/_/g, " ")}</div>`,
+          )
+          .join("");
+        suggestionsList.style.display = "block";
+      } else {
+        suggestionsList.style.display = "none";
+      }
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+      suggestionsList.style.display = "none";
+    }
+  });
+
+  function addSuggestion(suggestion) {
+    const textarea = document.getElementById("symptoms");
+    const current = textarea.value.trim();
+    if (!current) {
+      textarea.value = suggestion.replace(/_/g, " ") + ", ";
+    } else {
+      const parts = current.split(/[,]+/);
+      parts[parts.length - 1] = suggestion.replace(/_/g, " ");
+      textarea.value = parts.join(", ").trim() + ", ";
+    }
+    textarea.focus();
+    suggestionsList.style.display = "none";
+  }
+
+  document.addEventListener("click", function (event) {
+    if (
+      !event.target.closest("#suggestionsList") &&
+      event.target !== symptomsInput
+    ) {
+      suggestionsList.style.display = "none";
+    }
+  });
+
+  window.addEventListener("DOMContentLoaded", function () {
+    const resultSection = document.querySelector(
+      ".analysis-card, .predictions-card, .modern-alert",
+    );
+    if (resultSection) {
+      resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    if (chatBox) {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  });
+</script>
+
+{% endblock %}

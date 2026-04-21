@@ -1,0 +1,392 @@
+{% extends 'base.html' %} {% block title %}About Us - SmartMediHub{% endblock %}
+{% block head %}
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+<style>
+  html,
+  body {
+    background-color: #000 !important;
+    color: #f1f1f1;
+    min-height: 100%;
+  }
+
+  .container {
+    background: transparent !important;
+  }
+
+  .mt-3 {
+    color: #ffffff !important;
+  }
+
+  .about-section {
+    background-color: transparent;
+  }
+
+  .card {
+    background-color: rgba(0, 0, 0, 0.52);
+  }
+</style>
+{% endblock %} {% block content %}
+<section class="about-section py-5">
+  <div class="container">
+    <h2 class="text-center mb-5 text-info fw-bold" data-aos="fade-up">
+      About SmartMediHub
+    </h2>
+
+    <!-- Who We Are -->
+    <div class="row align-items-center mb-5" data-aos="fade-right">
+      <div class="col-lg-6">
+        <h3 class="text-info">Who We Are</h3>
+        <p class="mt-3">
+          SmartMediHub is a modern hospital management system designed to
+          simplify healthcare operations. It combines intelligent automation
+          with patient-centered care to improve efficiency and accessibility.
+        </p>
+      </div>
+      <div class="col-lg-6 text-center">
+        <img
+          src="{{ url_for('static', filename='Images/WHO_WE_ARE.png') }}"
+          class="img-fluid rounded shadow"
+          style="height: 350px; object-fit: cover" />
+      </div>
+    </div>
+
+    <!-- What We Provide -->
+    <div
+      class="row align-items-center mb-5 flex-lg-row-reverse"
+      data-aos="fade-left">
+      <div class="col-lg-6">
+        <h3 class="text-info">What We Provide</h3>
+        <p class="mt-3">
+          Our system includes patient management, doctor scheduling, appointment
+          booking, electronic health records, billing, pharmacy, and laboratory
+          modules — all integrated into one platform.
+        </p>
+      </div>
+      <div class="col-lg-6 text-center">
+        <img
+          src="{{ url_for('static', filename='Images/services.png') }}"
+          class="img-fluid rounded shadow"
+          style="height: 350px; object-fit: cover" />
+      </div>
+    </div>
+
+    <!-- Why Choose Us -->
+    <div class="row align-items-center mb-5" data-aos="fade-up">
+      <div class="col-lg-6">
+        <h3 class="text-info">Why Choose Us?</h3>
+        <p class="mt-3">
+          Our platform offers AI-powered disease prediction, real-time
+          appointment management, secure patient records, and intelligent doctor
+          recommendations — making healthcare smarter and faster.
+        </p>
+      </div>
+      <div class="col-lg-6 text-center">
+        <img
+          src="{{ url_for('static', filename='Images/care.png') }}"
+          class="img-fluid rounded shadow"
+          style="height: 350px; object-fit: cover" />
+      </div>
+    </div>
+
+    <hr style="color: #00bcd4; border: 2px double" />
+
+    <!-- Team -->
+    <div class="mb-5" data-aos="zoom-in">
+      <h3 class="text-center text-info mb-4">Our Team</h3>
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-3 text-center">
+          <div class="card p-3 shadow" style="background: #111">
+            <img
+              src="{{ url_for('static', filename='Images/Memb 1.jpg') }}"
+              width="100"
+              height="100"
+              style="border-radius: 50%" />
+            <h5 class="text-info mt-2">Asutosh</h5>
+            <p style="color: #b9c5c7">Developer</p>
+          </div>
+        </div>
+
+        <div class="col-md-3 text-center">
+          <div class="card p-3 shadow" style="background: #111">
+            <img
+              src="{{ url_for('static', filename='Images/Memb 3.jpg') }}"
+              width="100"
+              height="100"
+              style="border-radius: 50%" />
+            <h5 class="text-info mt-2">Chandra Sekhar Sahu</h5>
+            <p style="color: #b9c5c7">UI designer</p>
+          </div>
+        </div>
+
+        <div class="col-md-3 text-center">
+          <div class="card p-3 shadow" style="background: #111">
+            <img
+              src="{{ url_for('static', filename='Images/Memb 2.jpg') }}"
+              width="100"
+              height="100"
+              style="border-radius: 50%" />
+            <h5 class="text-info mt-2">Ayushman Patnaik</h5>
+            <p style="color: #b9c5c7">Backend Developer</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr style="color: #00bcd4; border: 2px double" />
+
+    <div data-aos="fade-up">
+      <h3 class="text-center text-info mb-4">What Our Patients Say</h3>
+
+      <div class="row g-4 justify-content-center">
+        <!-- Card 1 -->
+        <div class="col-md-4">
+          <div
+            class="card p-3 shadow text-center"
+            style="
+              background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.03),
+                rgba(0, 0, 0, 0.25)
+              );
+              border-radius: 14px;
+              padding: 28px;
+              border: 1px solid rgba(255, 255, 255, 0.07);
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+              transition: all 0.3s ease;
+            "
+            onmouseover="
+              this.style.transform = 'translateY(-10px)';
+              this.style.borderColor = 'rgba(0,200,255,0.4)';
+              this.style.boxShadow = '0 18px 40px rgba(0,200,255,0.25)';
+            "
+            onmouseout="
+              this.style.transform = 'none';
+              this.style.borderColor = 'rgba(255,255,255,0.07)';
+              this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.6)';
+            ">
+            <img
+              src="{{ url_for('static', filename='Images/patient1 (1).jpg') }}"
+              width="90"
+              height="90"
+              style="
+                border-radius: 50%;
+                border: 4px solid rgba(0, 200, 255, 0.12);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+                transition: all 0.3s ease;
+              " />
+
+            <h6 class="fw-bold" style="color: #00d5ff; margin-top: 10px">
+              Nidhi Verma
+            </h6>
+            <p style="color: #cdd5d7">
+              "Exceptional experience! The online interface is smooth, and the
+              response time was excellent."
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-4">
+          <div
+            class="card p-3 shadow text-center"
+            style="
+              background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.03),
+                rgba(0, 0, 0, 0.25)
+              );
+              border-radius: 14px;
+              padding: 28px;
+              border: 1px solid rgba(255, 255, 255, 0.07);
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+              transition: all 0.3s ease;
+            "
+            onmouseover="
+              this.style.transform = 'translateY(-10px)';
+              this.style.borderColor = 'rgba(0,200,255,0.4)';
+              this.style.boxShadow = '0 18px 40px rgba(0,200,255,0.25)';
+            "
+            onmouseout="
+              this.style.transform = 'none';
+              this.style.borderColor = 'rgba(255,255,255,0.07)';
+              this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.6)';
+            ">
+            <img
+              src="{{ url_for('static', filename='Images/patient1 (2).jpg') }}"
+              width="90"
+              height="90"
+              style="
+                border-radius: 50%;
+                border: 4px solid rgba(0, 200, 255, 0.12);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+                transition: all 0.3s ease;
+              " />
+
+            <h6 class="fw-bold" style="color: #00d5ff; margin-top: 10px">
+              Aditya Bansal
+            </h6>
+            <p style="color: #cdd5d7">
+              "I loved how my records were securely stored and accessible during
+              emergencies. Very reliable."
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-md-4">
+          <div
+            class="card p-3 shadow text-center"
+            style="
+              background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.03),
+                rgba(0, 0, 0, 0.25)
+              );
+              border-radius: 14px;
+              padding: 28px;
+              border: 1px solid rgba(255, 255, 255, 0.07);
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+              transition: all 0.3s ease;
+            "
+            onmouseover="
+              this.style.transform = 'translateY(-10px)';
+              this.style.borderColor = 'rgba(0,200,255,0.4)';
+              this.style.boxShadow = '0 18px 40px rgba(0,200,255,0.25)';
+            "
+            onmouseout="
+              this.style.transform = 'none';
+              this.style.borderColor = 'rgba(255,255,255,0.07)';
+              this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.6)';
+            ">
+            <img
+              src="{{ url_for('static', filename='Images/patient1 (3).jpg') }}"
+              width="90"
+              height="90"
+              style="
+                border-radius: 50%;
+                border: 4px solid rgba(0, 200, 255, 0.12);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+                transition: all 0.3s ease;
+              " />
+
+            <h6 class="fw-bold" style="color: #00d5ff; margin-top: 10px">
+              Priya Mohanty
+            </h6>
+            <p style="color: #cdd5d7">
+              "Never thought AI could help detect my condition before symptoms
+              worsened. Highly recommended!"
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="col-md-4">
+          <div
+            class="card p-3 shadow text-center"
+            style="
+              background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.03),
+                rgba(0, 0, 0, 0.25)
+              );
+              border-radius: 14px;
+              padding: 28px;
+              border: 1px solid rgba(255, 255, 255, 0.07);
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+              transition: all 0.3s ease;
+            "
+            onmouseover="
+              this.style.transform = 'translateY(-10px)';
+              this.style.borderColor = 'rgba(0,200,255,0.4)';
+              this.style.boxShadow = '0 18px 40px rgba(0,200,255,0.25)';
+            "
+            onmouseout="
+              this.style.transform = 'none';
+              this.style.borderColor = 'rgba(255,255,255,0.07)';
+              this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.6)';
+            ">
+            <img
+              src="{{ url_for('static', filename='Images/patient1 (4).jpg') }}"
+              width="90"
+              height="90"
+              style="
+                border-radius: 50%;
+                border: 4px solid rgba(0, 200, 255, 0.12);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+                transition: all 0.3s ease;
+              " />
+
+            <h6 class="fw-bold" style="color: #00d5ff; margin-top: 10px">
+              Farhan Shaikh
+            </h6>
+            <p style="color: #cdd5d7">
+              "Staff were kind and the appointment system ensured I never waited
+              long. Great job!"
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="col-md-4">
+          <div
+            class="card p-3 shadow text-center"
+            style="
+              background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.03),
+                rgba(0, 0, 0, 0.25)
+              );
+              border-radius: 14px;
+              padding: 28px;
+              border: 1px solid rgba(255, 255, 255, 0.07);
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+              transition: all 0.3s ease;
+            "
+            onmouseover="
+              this.style.transform = 'translateY(-10px)';
+              this.style.borderColor = 'rgba(0,200,255,0.4)';
+              this.style.boxShadow = '0 18px 40px rgba(0,200,255,0.25)';
+            "
+            onmouseout="
+              this.style.transform = 'none';
+              this.style.borderColor = 'rgba(255,255,255,0.07)';
+              this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.6)';
+            ">
+            <img
+              src="{{ url_for('static', filename='Images/patient1 (5).jpg') }}"
+              width="90"
+              height="90"
+              style="
+                border-radius: 50%;
+                border: 4px solid rgba(0, 200, 255, 0.12);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+                transition: all 0.3s ease;
+              " />
+
+            <h6 class="fw-bold" style="color: #00d5ff; margin-top: 10px">
+              Lakshmi Reddy
+            </h6>
+            <p style="color: #cdd5d7">
+              "The best healthcare technology experience I've had in India.
+              Truly ahead of its time."
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer
+  style="background: #121212; padding: 20px; text-align: center; color: #fff">
+  © 2026 <strong>SmartMediHub</strong> | All rights reserved.
+</footer>
+
+{% endblock %} {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
+{% endblock %}
